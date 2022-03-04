@@ -15,22 +15,25 @@ def addUser(user):
 
 def getUsers():
 	rows = usersCollection.find()
+	userIds = []
 	for row in rows:
-		print(row)
-	return rows
+		userIds.append(row["user"])
+	return userIds
 
 def getSubmissions():
 	submissions = submissionCollection.find()
+	subList = []
 	for submission in submissions:
-		print(submission)
-	return submissions
+		subList.append(submission["titleSlug"])
+	return subList
 
-def getSubmissionsForUser(user):
+def getUserSubmissions(user):
 	query = {"user": user}
 	submissions = submissionCollection.find(query)
+	subList = []
 	for submission in submissions:
-		print(submission)
-	return submissions
+		subList.append(submission["titleSlug"])
+	return subList
 
 def addSubmission(user, titleSlug):
 	row = {"user": user, "titleSlug": titleSlug}

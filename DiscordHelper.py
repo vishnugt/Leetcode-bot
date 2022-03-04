@@ -6,6 +6,7 @@ import MongoHelper
 import schedule
 
 client = discord.Client()
+channel = None
 
 @client.event
 async def on_message(message):
@@ -16,27 +17,39 @@ async def on_message(message):
 		await message.channel.send("User added")
 
 
-async def job():
+@client.event
+async def on_ready():
+    print('Logged in as')
+    print(client.user.name)
+    print(client.user.id)
+    global channel
+    channel = client.get_channel(802543833812172814)
+    job.start()
+    print('------')
 
-	print("Hey I'm on loop")
+@tasks.loop(seconds = 30)
+async def job():
+	print('loop')
+	
 	users = MongoHelper.getUsers()
 	for user in users:
 		submissionsFromLeetcode = LeetcodeHelper.getUserSubmissions(user)
-		submissionsFromMongo = MongoHelper.getSubmissionsForUser(user)
-		for submission in submissionsFromLeetcode:
-			if submission in submissionsFromMongo:
+		submissionsFromMongo = MongoHelper.getUserSubmissions(user)
+		print(submissionsFromLeetcode)
+		print(submissionsFromMongo)
+		print("*******************")
+		if submissionsFromMongo is None or submissionsFromLeetcode is None:
+			continue
+		for titleSlug, submission in submissionsFromLeetcode.items():
+			if titleSlug in submissionsFromMongo:
 				continue
-				
-			# add to MongoDB
-			# print in channel
-			titleSlug = submission["titleSlug"]
 			title = submission["title"]
 			timestamp = submission["timestamp"]
 			url = "https://leetcode.com/problems/" + titleSlug
 
 			MongoHelper.addSubmission(user, titleSlug)
-			print("{0} completed {1}, give the problem a shot [here](url)".format(user, title))
+			line = user + " completed " + title + ", give the problem a shot [here]( " + url + ")"
+			await channel.send(line)
 
 
-schedule.every(20).seconds.do(job)
 client.run(config.discordToken)
