@@ -1,0 +1,4 @@
+discord.py==1.7.3
+pymongo==4.0.2
+requests==2.22.0
+schedule==1.1.0
