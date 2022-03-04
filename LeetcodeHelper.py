@@ -20,14 +20,14 @@ headers = {
 
 
 def getUserSubmissions(user):
-    data = '{"operationName":"getRecentSubmissionList","variables":{"username":' + f'"{user}"' + '},"query":"query getRecentSubmissionList($username: String!, $limit: Int) {\\n  recentSubmissionList(username: $username, limit: $limit) {\\n    title\\n    titleSlug\\n    timestamp\\n    statusDisplay\\n    lang\\n  }\\n  languageList {\\n    id\\n    name\\n    verboseName\\n }\\n}\\n"}'
+    data = '{"operationName":"getRecentSubmissionList","variables":{"username":' + f'"{user}"' + '},"query":"query getRecentSubmissionList($username: String!, $limit: Int) {\\n  recentSubmissionList(username: $username, limit: $limit) {\\n    title\\n    titleSlug\\n    timestamp\\n    statusDisplay\\n    lang\\n    }\\n  languageList {\\n    id\\n    name\\n    verboseName\\n }\\n}\\n"}'
     response = requests.post('https://leetcode.com/graphql', headers=headers, data=data)
     submissions = json.loads(response.content)['data']['recentSubmissionList']
     subDict = {}
     if submissions is None:
         return subDict
     for submission in submissions:
-        if submission["statusDisplay"] == "Accepted":
+        if submission["statusDisplay"] != "Accepted":
             continue
         titleSlug = submission["titleSlug"]
         title = submission["title"]

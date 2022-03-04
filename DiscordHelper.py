@@ -19,25 +19,21 @@ async def on_message(message):
 
 @client.event
 async def on_ready():
-    print('Logged in as')
-    print(client.user.name)
-    print(client.user.id)
+    print('Logged in')
     global channel
-    channel = client.get_channel(802543833812172814)
+    channel = client.get_channel(config.channelId)
     job.start()
-    print('------')
 
 @tasks.loop(seconds = 30)
 async def job():
-	print('loop')
-	
+	#print('loop')
 	users = MongoHelper.getUsers()
 	for user in users:
 		submissionsFromLeetcode = LeetcodeHelper.getUserSubmissions(user)
 		submissionsFromMongo = MongoHelper.getUserSubmissions(user)
-		print(submissionsFromLeetcode)
-		print(submissionsFromMongo)
-		print("*******************")
+		# print(submissionsFromLeetcode)
+		# print(submissionsFromMongo)
+		# print("*******************")
 		if submissionsFromMongo is None or submissionsFromLeetcode is None:
 			continue
 		for titleSlug, submission in submissionsFromLeetcode.items():
@@ -48,8 +44,10 @@ async def job():
 			url = "https://leetcode.com/problems/" + titleSlug
 
 			MongoHelper.addSubmission(user, titleSlug)
-			line = user + " completed " + title + ", give the problem a shot [here]( " + url + ")"
-			await channel.send(line)
+			line = user + " completed the problem in " + submission["lang"]
+			embed=discord.Embed(title=title, url=url, description=line, color=0xFF5733)
+			await channel.send(embed=embed)
+			#await channel.send(line)
 
 
 client.run(config.discordToken)
