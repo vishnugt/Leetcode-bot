@@ -36,4 +36,4 @@ def getUserSubmissions(user):
             subDict[titleSlug] = submission
     except Exception:
         traceback.print_exc()
-    return subDictwq
+    return subDict
