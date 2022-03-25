@@ -1,3 +1,5 @@
+import traceback
+import sys
 from discord.ext import tasks
 import discord
 import LeetcodeHelper
