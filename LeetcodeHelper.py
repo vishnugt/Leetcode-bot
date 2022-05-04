@@ -24,9 +24,10 @@ headers = {
 def getUserSubmissions(user):
     subDict = {}
     try:
-        data = '{"operationName":"getRecentSubmissionList","variables":{"username":' + f'"{user}"' + '},"query":"query getRecentSubmissionList($username: String!, $limit: Int) {\\n  recentSubmissionList(username: $username, limit: $limit) {\\n    title\\n    titleSlug\\n    timestamp\\n    statusDisplay\\n    lang\\n    }\\n  languageList {\\n    id\\n    name\\n    verboseName\\n }\\n}\\n"}'
+        data = '{"operationName":"getRecentAcSubmissions","variables":{"username":' + f'"{user}"' + '},"query":"query getRecentAcSubmissions($username: String!, $limit: Int) {\\n  recentAcSubmissionList(username: $username, limit: $limit) {\\n    title\\n    titleSlug\\n    timestamp\\n    statusDisplay\\n    lang\\n    }\\n  languageList {\\n    id\\n    name\\n    verboseName\\n }\\n}\\n"}'
         response = requests.post('https://leetcode.com/graphql', headers=headers, data=data)
-        submissions = json.loads(response.content)['data']['recentSubmissionList']
+        submissions = json.loads(response.content)['data']['recentAcSubmissionList']
+        #print("Found following submissions for user " + user + " ; submissions: "+ str(submissions)
         if submissions is None:
             return subDict
         for submission in submissions:
